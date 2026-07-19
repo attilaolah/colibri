@@ -61,12 +61,14 @@
 
             # Wrap coli (the Python CLI) so it finds the right python and the engine
             mkdir -p $out/share/colibri
-            cp c/coli $out/share/colibri/coli
+            cp c/coli $out/share/colibri
             chmod +x $out/share/colibri/coli
-            cp -r c/tools $out/share/colibri/tools
+            cp c/glm $out/share/colibri
+            cp -r c/tools $out/share/colibri
 
             makeWrapper ${pythonEnv}/bin/python $out/bin/coli \
               --add-flags "$out/share/colibri/coli" \
+              --set COLI_ENGINE "$out/share/colibri/glm" \
               --set PYTHONPATH "${pythonEnv}/${pkgs.python3.sitePackages}"
             runHook postInstall
           '';
