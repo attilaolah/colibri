@@ -6,27 +6,34 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+  }:
+    flake-utils.lib.eachDefaultSystem (
+      system: let
+        pkgs = import nixpkgs {inherit system;};
 
         # Python with the packages needed by the offline converter tools
-        pythonEnv = pkgs.python3.withPackages (ps: with ps; [
-          torch
-          safetensors
-          huggingface-hub
-          numpy
-          tokenizers
-          datasets
-        ]);
+        pythonEnv = pkgs.python3.withPackages (
+          ps:
+            with ps; [
+              torch
+              safetensors
+              huggingface-hub
+              numpy
+              tokenizers
+              datasets
+            ]
+        );
 
         colibri = pkgs.stdenv.mkDerivation {
           pname = "colibri";
           version = "1.0";
           src = ./.;
 
-          nativeBuildInputs = [ pkgs.makeWrapper ];
+          nativeBuildInputs = [pkgs.makeWrapper];
 
           buildInputs = [
             pkgs.gcc
@@ -94,14 +101,16 @@
           };
         };
 
+        formatter = (import nixpkgs {inherit system;}).alejandra;
+
         devShells.default = pkgs.mkShell {
-          inputsFrom = [ colibri ];
+          inputsFrom = [colibri];
 
           packages = [
             pythonEnv
             pkgs.gcc
             pkgs.gnumake
-            pkgs.clang-tools          # clangd / clang-tidy for IDE support
+            pkgs.clang-tools # clangd / clang-tidy for IDE support
             pkgs.pkg-config
           ];
 
