@@ -33,11 +33,11 @@
           version = "1.0";
           src = ./.;
 
-          nativeBuildInputs = [pkgs.makeWrapper];
+          nativeBuildInputs = with pkgs; [makeWrapper];
 
-          buildInputs = [
-            pkgs.gcc
-            pkgs.gmp
+          buildInputs = with pkgs; [
+            gcc
+            gmp
           ];
 
           # Use x86-64-v3 (AVX2) for a portable binary; override with ARCH=native for local builds
@@ -106,12 +106,12 @@
         devShells.default = pkgs.mkShell {
           inputsFrom = [colibri];
 
-          packages = [
+          packages = with pkgs; [
             pythonEnv
-            pkgs.gcc
-            pkgs.gnumake
-            pkgs.clang-tools # clangd / clang-tidy for IDE support
-            pkgs.pkg-config
+            gcc
+            gnumake
+            clang-tools # clangd / clang-tidy for IDE support
+            pkg-config
           ];
 
           shellHook = ''
